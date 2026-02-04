@@ -3,203 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EarnIt V12</title>
+    <title>EarnIt</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1164/1164620.png">
     <style>
+        /* DISEÑO LIMPIO Y MODERNO */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        :root { --primary: #00ff88; --bg: #000000; --card: #1c1c1e; --red: #ff453a; --gray: #2c2c2e; }
+        :root { --primary: #00ff88; --bg: #000000; --surface: #1c1c1e; --input: #2c2c2e; --red: #ff453a; --accent: #ff9f0a; }
         
         body { 
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg); color: white; padding: 20px; margin: 0; padding-bottom: 80px;
-            max-width: 600px; margin-left: auto; margin-right: auto;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg); color: white; padding: 20px; margin: 0; padding-bottom: 50px;
+            max-width: 500px; margin-left: auto; margin-right: auto;
         }
 
-        h1 { margin: 10px 0 20px; font-size: 1.8rem; text-align: center; letter-spacing: -1px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; margin-bottom: 25px; }
+        h1 { margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -1px; background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .streak { background: rgba(255, 159, 10, 0.2); color: var(--accent); padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; border: 1px solid rgba(255, 159, 10, 0.3); }
 
-        /* BOTON DE ARRANQUE GIGANTE */
-        .start-btn {
-            background: #333; color: #aaa; border: 2px solid #444;
-            width: 100%; padding: 20px; border-radius: 20px;
-            font-size: 1.1rem; font-weight: 800; margin-bottom: 20px;
-            cursor: pointer; transition: all 0.3s ease;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .start-btn.active {
-            background: var(--primary); color: black; border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
-        }
-
-        .balance-card { background: var(--card); padding: 25px; border-radius: 24px; text-align: center; margin-bottom: 25px; border: 1px solid #333; }
-        .time-display { font-size: 3.5rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1; margin: 10px 0; }
-        .label-sm { color: #888; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
-
-        .form-group { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #333; }
-        input, select { background: var(--gray); border: 1px solid #333; padding: 12px; border-radius: 12px; color: white; font-size: 1rem; width: 100%; }
+        .card { background: var(--surface); border-radius: 24px; padding: 25px 20px; margin-bottom: 20px; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
         
-        .row { display: flex; gap: 10px; }
-        .btn { border: none; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 1rem; width: 100%; margin-top: 5px; cursor: pointer; }
-        .btn-add { background: var(--primary); color: black; }
+        .label { color: #888; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; display: block; }
+        
+        .time-display { font-size: 4rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1; margin: 10px 0 20px; letter-spacing: -2px; text-shadow: 0 0 20px rgba(0,255,136,0.2); }
+        
+        /* BOTONES */
+        .btn { border: none; padding: 16px; border-radius: 18px; font-weight: 700; font-size: 1rem; width: 100%; cursor: pointer; transition: transform 0.1s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn:active { transform: scale(0.97); }
+        .btn-main { background: var(--primary); color: #000; }
         .btn-use { background: var(--red); color: white; }
-        .btn-pause { background: #ff9d00; color: black; }
+        .btn-pause { background: var(--accent); color: #000; }
+        .btn-icon { background: var(--input); color: var(--primary); padding: 8px 14px; border-radius: 10px; font-size: 0.85rem; }
+        .btn-del { background: transparent; color: #555; font-size: 1.2rem; padding: 10px; }
 
-        .task-list { display: flex; flex-direction: column; gap: 10px; }
-        .task-item { background: var(--card); padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
-        .task-info b { display: block; font-size: 1rem; }
-        .task-info span { color: #888; font-size: 0.85rem; }
-        .btn-action { background: var(--gray); color: var(--primary); padding: 8px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; border: none; }
-        .running { color: #ff9d00 !important; font-weight: bold; }
+        /* INPUTS */
+        .input-group { display: flex; flex-direction: column; gap: 12px; }
+        input, select { background: var(--input); border: 1px solid transparent; padding: 15px; border-radius: 16px; color: white; font-size: 1rem; width: 100%; transition: 0.2s; }
+        input:focus { border-color: var(--primary); background: #3a3a3c; }
+        .row { display: flex; gap: 10px; }
+
+        /* LISTA */
+        .task-list { display: flex; flex-direction: column; gap: 12px; }
+        .task-item { background: var(--surface); padding: 18px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #2c2c2e; transition: all 0.3s; }
+        .task-content b { display: block; font-size: 1.1rem; margin-bottom: 4px; }
+        .task-status { font-size: 0.9rem; color: #888; font-family: "SF Pro Text", monospace; }
+        .status-active { color: var(--accent); font-weight: bold; }
+
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <h1>EarnIt V12</h1>
-
-    <button id="initBtn" class="start-btn" onclick="startSystem()">
-        <span>▶️</span> INICIAR SISTEMA DE SONIDO
-    </button>
-    <div style="text-align:center; font-size:0.75rem; color:#666; margin-top:-10px; margin-bottom:20px;">
-        (Toca esto cada vez que abras la app para que funcione en 2º plano)
+    <div class="header">
+        <h1>EarnIt</h1>
+        <div class="streak" id="streakDisplay">🔥 0 días</div>
     </div>
 
-    <div class="balance-card">
-        <div class="label-sm">TIEMPO ACUMULADO</div>
+    <div class="card" style="text-align: center;">
+        <span class="label">TIEMPO DISPONIBLE</span>
         <div class="time-display" id="balance">00:00:00</div>
-        <button id="useBtn" class="btn btn-use" onclick="toggleUsage()">CANJEAR TIEMPO</button>
+        <button id="useBtn" class="btn btn-use" onclick="toggleUsage()">
+            <span>🎮</span> CANJEAR TIEMPO
+        </button>
     </div>
 
-    <div class="form-group">
-        <div class="label-sm">NUEVA TAREA</div>
-        <select id="taskType" onchange="toggleInputs()">
-            <option value="timer">⏱ Cronómetro</option>
-            <option value="click">✅ Check Rápido</option>
-        </select>
-        <input type="text" id="taskName" placeholder="Nombre...">
-        <div class="row">
-            <input type="number" id="taskDuration" placeholder="Duración (m)">
-            <input type="number" id="taskReward" placeholder="Premio (m)">
+    <div class="card">
+        <span class="label">NUEVA RUTINA</span>
+        <div class="input-group">
+            <select id="taskType" onchange="toggleInputs()">
+                <option value="timer">⏱ Cronómetro (Estudio/Trabajo)</option>
+                <option value="click">✅ Tarea Rápida (Cama/Platos)</option>
+            </select>
+            <input type="text" id="taskName" placeholder="Nombre de la tarea...">
+            <div class="row">
+                <input type="number" id="taskDuration" placeholder="Dura (min)">
+                <input type="number" id="taskReward" placeholder="Ganas (min)">
+            </div>
+            <button class="btn btn-main" onclick="createTask()">+ AÑADIR TAREA</button>
         </div>
-        <button class="btn btn-add" onclick="createTask()">AÑADIR</button>
     </div>
 
+    <span class="label" style="margin-left: 10px; margin-bottom: 10px;">MIS TAREAS ACTIVAS</span>
     <div class="task-list" id="taskList"></div>
 
-    <audio id="silentAudio" loop playsinline preload="auto">
-        <source src="data:audio/mp3;base64,SUQzBAAAAAABAFRYWFgAAAASAAADbWFqb3JfYnJhbmQAbXA0MgBUWFhYAAAAEQAAA21pbm9yX3ZlcnNpb24AMABUWFhYAAAAHAAAA2NvbXBhdGlibGVfYnJhbmRzAGlzb21tcDQyAFRTU0UAAAAPAAADTGF2ZjU3LjU2LjEwMAAAAAAAAAAAAAAA//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIwAHCwwRFh4iJSksLzI2Oi8xMzy/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/AAAADExhdmM1Ny42NC4xMDIAAAAAAAAAAAAAAAINAAAAAAAAAAAAAAAAAAAAAA==" type="audio/mpeg">
-    </audio>
-
     <script>
-        // --- INICIALIZACIÓN DE AUDIO (CRÍTICO) ---
-        const silentAudio = document.getElementById('silentAudio');
-        const initBtn = document.getElementById('initBtn');
-        let audioContext = null;
-        let systemActive = false;
-
-        function startSystem() {
-            // 1. Crear el contexto de audio
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
-            // 2. Intentar reproducir audio HTML5 (Silencio)
-            // Esto es lo que mantiene la app viva en segundo plano
-            const playPromise = silentAudio.play();
-
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    // ÉXITO
-                    systemActive = true;
-                    initBtn.classList.add('active');
-                    initBtn.innerHTML = "<span>🔊</span> SISTEMA ACTIVO";
-                    
-                    // 3. Forzar Session Metadata (Para que salga en pantalla bloqueo)
-                    if ('mediaSession' in navigator) {
-                        navigator.mediaSession.metadata = new MediaMetadata({
-                            title: "EarnIt Activo",
-                            artist: "Vigilando tiempo...",
-                            artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/1164/1164620.png', sizes: '512x512', type: 'image/png' }]
-                        });
-                        navigator.mediaSession.playbackState = "playing";
-                    }
-
-                    // 4. Pedir permiso notificaciones si no se tiene
-                    Notification.requestPermission();
-
-                }).catch(error => {
-                    // ERROR
-                    console.error(error);
-                    alert("iOS bloqueó el audio. \n\nSOLUCIÓN:\n1. Cierra la app del todo.\n2. Vuelve a abrirla.\n3. Toca ESTE botón antes de hacer nada más.");
-                    initBtn.innerHTML = "❌ ERROR AL INICIAR";
-                });
-            }
-            
-            // 5. Resumir contexto WebAudio por si estaba suspendido
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-        }
-
-        // --- SISTEMA DE ALARMA ---
-        function playLoudAlarm() {
-            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioContext.state === 'suspended') audioContext.resume();
-
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
-
-            // Sonido tipo SIRENA (Sube y baja)
-            osc.type = 'sawtooth';
-            const now = audioContext.currentTime;
-            
-            osc.frequency.setValueAtTime(600, now);
-            osc.frequency.linearRampToValueAtTime(900, now + 0.5);
-            osc.frequency.linearRampToValueAtTime(600, now + 1.0);
-
-            gain.gain.setValueAtTime(0.5, now);
-            gain.gain.linearRampToValueAtTime(0, now + 2);
-
-            osc.start();
-            osc.stop(now + 2);
-
-            if (navigator.vibrate) navigator.vibrate([1000]);
-        }
-
-        function notify(title, body) {
-            playLoudAlarm();
-            if (Notification.permission === 'granted') new Notification(title, { body });
-        }
-
-        // --- LÓGICA DE TIEMPO (STANDARD) ---
+        // --- BASE DE DATOS LOCAL ---
         let totalSeconds = parseInt(localStorage.getItem('totalSeconds')) || 0;
         let streak = parseInt(localStorage.getItem('streak')) || 0;
         let tasks = JSON.parse(localStorage.getItem('tasksArray')) || [];
         let isUsing = false;
-        let mainInterval;
+        let interval = null;
+
+        // --- FUNCIONES PRINCIPALES ---
 
         function updateDisplay() {
+            // Formatear tiempo HH:MM:SS
             let h = Math.floor(totalSeconds / 3600);
             let m = Math.floor((totalSeconds % 3600) / 60);
             let s = totalSeconds % 60;
-            const timeStr = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            document.getElementById('balance').innerText = timeStr;
-            localStorage.setItem('totalSeconds', totalSeconds);
+            document.getElementById('balance').innerText = 
+                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
             
-            // Actualizar Widget de bloqueo
-            if(systemActive && 'mediaSession' in navigator) {
-                if(isUsing) {
-                    navigator.mediaSession.metadata.title = "CANJEANDO TIEMPO";
-                    navigator.mediaSession.metadata.artist = `Quedan: ${timeStr}`;
-                } else if (tasks.some(t => t.endTime > Date.now())) {
-                    navigator.mediaSession.metadata.title = "TRABAJANDO";
-                    navigator.mediaSession.metadata.artist = "Gana tu tiempo...";
-                }
-            }
+            // Guardar y actualizar racha
+            localStorage.setItem('totalSeconds', totalSeconds);
+            document.getElementById('streakDisplay').innerText = `🔥 ${streak} días`;
         }
 
         function createTask() {
@@ -208,127 +116,188 @@
             const reward = document.getElementById('taskReward').value;
             const duration = type === 'click' ? 0 : document.getElementById('taskDuration').value;
 
-            if (!name || !reward) return;
-            tasks.push({ id: Date.now(), name, duration: parseInt(duration), reward: parseInt(reward), type, endTime: null, notified: false });
-            saveTasks(); renderTasks();
+            if (!name || !reward) return alert("Falta información");
+            if (type === 'timer' && !duration) return alert("Falta la duración");
+
+            tasks.push({
+                id: Date.now(),
+                name,
+                type,
+                duration: parseInt(duration),
+                reward: parseInt(reward),
+                endTime: null
+            });
             
+            saveAndRender();
+            // Limpiar campos
             document.getElementById('taskName').value = "";
             document.getElementById('taskDuration').value = "";
             document.getElementById('taskReward').value = "";
         }
 
         function renderTasks() {
-            const container = document.getElementById('taskList');
-            container.innerHTML = "";
+            const list = document.getElementById('taskList');
+            list.innerHTML = "";
             const now = Date.now();
 
             tasks.forEach(task => {
-                let status = "", btn = "", cls = "";
-                
+                let statusHtml = "";
+                let btnHtml = "";
+
                 if (task.type === 'click') {
-                    status = `+${task.reward}m`; btn = "Cobrar";
+                    statusHtml = `Premio: +${task.reward} min`;
+                    btnHtml = `<button class="btn btn-icon" onclick="claimReward(${task.id})">✅ Hecho</button>`;
                 } else {
-                    if (task.endTime && task.endTime > now) {
-                        let rem = Math.ceil((task.endTime - now) / 1000);
-                        let m = Math.floor(rem/60);
-                        let s = (rem%60).toString().padStart(2,'0');
-                        status = `⏳ ${m}:${s}`; btn = "Esperar..."; cls = "running";
-                    } else if (task.endTime && task.endTime <= now) {
-                        status = "¡LISTO!"; btn = "Reclamar"; cls = "running";
-                        if (!task.notified) {
-                            notify("¡TAREA COMPLETADA!", task.name);
-                            task.notified = true;
-                            saveTasks();
+                    // Lógica del Cronómetro
+                    if (task.endTime) {
+                        if (now >= task.endTime) {
+                            // Terminó
+                            statusHtml = `<span style="color:#00ff88; font-weight:bold;">¡COMPLETADO!</span>`;
+                            btnHtml = `<button class="btn btn-icon" style="background:#00ff88; color:black;" onclick="claimReward(${task.id})">💰 Cobrar</button>`;
+                        } else {
+                            // Corriendo
+                            const remaining = Math.ceil((task.endTime - now) / 1000);
+                            const rm = Math.floor(remaining / 60);
+                            const rs = (remaining % 60).toString().padStart(2, '0');
+                            statusHtml = `<span class="status-active">⏳ ${rm}:${rs} restantes</span>`;
+                            btnHtml = `<button class="btn btn-icon" style="opacity:0.5; cursor:default;">En curso...</button>`;
                         }
                     } else {
-                        status = `${task.duration}m / ${task.reward}m`; btn = "Iniciar";
+                        // Esperando iniciar
+                        statusHtml = `${task.duration} min → Ganas ${task.reward} min`;
+                        btnHtml = `<button class="btn btn-icon" onclick="startTask(${task.id})">▶️ Iniciar</button>`;
                     }
                 }
 
-                container.innerHTML += `
-                <div class="task-item">
-                    <div class="task-info"><b>${task.name}</b><span class="${cls}">${status}</span></div>
-                    <div class="task-actions">
-                        <button class="btn-action" onclick="handleTask(${task.id})" ${btn==='Esperar...'?'disabled':''}>${btn}</button>
-                        <button class="btn-action" style="background:none; color:#666;" onclick="deleteTask(${task.id})">✕</button>
+                list.innerHTML += `
+                    <div class="task-item">
+                        <div class="task-content">
+                            <b>${task.name}</b>
+                            <div class="task-status">${statusHtml}</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            ${btnHtml}
+                            <button class="btn btn-del" onclick="deleteTask(${task.id})">✕</button>
+                        </div>
                     </div>
-                </div>`;
+                `;
             });
-
-            // Si el sistema está activo pero el audio se pausó (iOS lo mata a veces), intentar revivir
-            if (systemActive && silentAudio.paused) silentAudio.play().catch(e => {});
         }
 
-        function handleTask(id) {
-            if(!systemActive) alert("⚠️ Recuerda pulsar 'INICIAR SISTEMA' arriba, o la alarma no sonará al bloquear.");
-            const task = tasks.find(t => t.id === id);
-            const now = Date.now();
+        // --- LÓGICA DE NEGOCIO ---
 
-            if (task.type === 'click') {
-                addTime(task.reward * 60);
-            } else {
-                if (!task.endTime || now > task.endTime) {
-                    if (task.endTime && now > task.endTime) {
-                        addTime(task.reward * 60); task.endTime = null; task.notified = false;
-                    } else {
-                        task.endTime = now + (task.duration * 60000); task.notified = false;
-                    }
-                }
+        function startTask(id) {
+            const task = tasks.find(t => t.id === id);
+            task.endTime = Date.now() + (task.duration * 60000);
+            saveAndRender();
+        }
+
+        function claimReward(id) {
+            const task = tasks.find(t => t.id === id);
+            totalSeconds += (task.reward * 60);
+            
+            // Gestión de Racha
+            const today = new Date().toDateString();
+            if (localStorage.getItem('lastDate') !== today) {
+                streak++;
+                localStorage.setItem('lastDate', today);
+                localStorage.setItem('streak', streak);
             }
-            saveTasks(); renderTasks();
+
+            // Resetear tarea
+            if (task.type === 'timer') task.endTime = null;
+            
+            // Animación visual simple
+            alert(`¡Genial! +${task.reward} minutos añadidos.`);
+            
+            saveAndRender();
+            updateDisplay();
         }
 
         function toggleUsage() {
             if (!isUsing) {
-                if (totalSeconds <= 0) return alert("No tienes tiempo.");
-                if(!systemActive) alert("⚠️ ATENCIÓN: Pulsa 'INICIAR SISTEMA' arriba primero.");
-                
+                if (totalSeconds <= 0) return alert("¡No tienes tiempo ahorrado!");
                 isUsing = true;
                 localStorage.setItem('usageStartTime', Date.now());
-                document.getElementById('useBtn').innerText = "PAUSAR";
+                document.getElementById('useBtn').innerHTML = "⏸ PAUSAR";
                 document.getElementById('useBtn').classList.replace('btn-use', 'btn-pause');
                 
-                mainInterval = setInterval(() => {
-                    if (totalSeconds > 0) {
-                        totalSeconds--; updateDisplay();
-                        if(totalSeconds === 0) {
-                            notify("¡TIEMPO AGOTADO!", "Se acabó el recreo.");
-                            stopUsage();
-                        }
-                    } else stopUsage();
-                }, 1000);
-            } else stopUsage();
+                interval = setInterval(tickUsage, 1000);
+            } else {
+                stopUsage();
+            }
+        }
+
+        function tickUsage() {
+            if (totalSeconds > 0) {
+                totalSeconds--;
+                updateDisplay();
+            } else {
+                stopUsage();
+                alert("¡TIEMPO AGOTADO!");
+            }
         }
 
         function stopUsage() {
-            isUsing = false; clearInterval(mainInterval);
+            isUsing = false;
+            clearInterval(interval);
             localStorage.removeItem('usageStartTime');
-            document.getElementById('useBtn').innerText = "CANJEAR TIEMPO";
+            document.getElementById('useBtn').innerHTML = "<span>🎮</span> CANJEAR TIEMPO";
             document.getElementById('useBtn').classList.replace('btn-pause', 'btn-use');
         }
 
-        function addTime(s) { totalSeconds += s; updateDisplay(); }
-        function deleteTask(id) { if(confirm("¿Borrar?")) { tasks = tasks.filter(t=>t.id!==id); saveTasks(); renderTasks(); }}
-        function saveTasks() { localStorage.setItem('tasksArray', JSON.stringify(tasks)); }
-        function toggleInputs() {
-             const type = document.getElementById('taskType').value;
-             document.getElementById('taskDuration').classList.toggle('hidden', type === 'click');
-        }
-
-        // Sync al volver
-        function sync() {
+        // --- SINCRONIZACIÓN MATEMÁTICA (Magia para iOS) ---
+        // Esto recalcula todo cuando vuelves a abrir la app
+        function syncState() {
             const now = Date.now();
-            const start = localStorage.getItem('usageStartTime');
-            if (start) {
-                const elapsed = Math.floor((now - parseInt(start)) / 1000);
-                if (elapsed >= totalSeconds) { totalSeconds = 0; stopUsage(); }
-                else { totalSeconds -= elapsed; localStorage.setItem('usageStartTime', now); }
+
+            // 1. Recalcular Tiempo Gastado si estaba corriendo
+            const usageStart = localStorage.getItem('usageStartTime');
+            if (usageStart) {
+                const secondsPassed = Math.floor((now - parseInt(usageStart)) / 1000);
+                if (secondsPassed >= totalSeconds) {
+                    totalSeconds = 0;
+                    stopUsage();
+                    alert("Se acabó tu tiempo mientras estabas fuera.");
+                } else {
+                    totalSeconds -= secondsPassed;
+                    localStorage.setItem('usageStartTime', now); // Resetear marca de tiempo
+                    if (!isUsing) toggleUsage(); // Reactivar visualmente
+                }
             }
-            updateDisplay(); renderTasks();
+
+            // 2. Refrescar tareas (para ver si ya terminaron)
+            renderTasks();
+            updateDisplay();
         }
 
-        window.onload = () => { sync(); setInterval(renderTasks, 1000); };
-        document.addEventListener("visibilitychange", () => { if(!document.hidden) sync(); });
+        // --- UTILIDADES ---
+        function deleteTask(id) {
+            if (confirm("¿Borrar tarea?")) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveAndRender();
+            }
+        }
+        function saveAndRender() {
+            localStorage.setItem('tasksArray', JSON.stringify(tasks));
+            renderTasks();
+        }
+        function toggleInputs() {
+            const type = document.getElementById('taskType').value;
+            const input = document.getElementById('taskDuration');
+            input.style.display = type === 'click' ? 'none' : 'block';
+        }
+
+        // --- CICLO DE VIDA ---
+        window.onload = () => {
+            syncState();
+            setInterval(renderTasks, 1000); // Refresca UI cada segundo sin lógica pesada
+        };
+        
+        // Detectar cuando vuelves a la app
+        document.addEventListener("visibilitychange", () => {
+            if (!document.hidden) syncState();
+        });
 
     </script>
 </body>
