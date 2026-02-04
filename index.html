@@ -3,138 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EarnIt V11</title>
+    <title>EarnIt V12</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1164/1164620.png">
     <style>
-        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-        :root { --primary: #00ff88; --bg: #000000; --card: #1c1c1e; --accent: #ff9d00; --red: #ff453a; --gray: #3a3a3c; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        :root { --primary: #00ff88; --bg: #000000; --card: #1c1c1e; --red: #ff453a; --gray: #2c2c2e; }
         
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg); color: white; padding: 20px; margin: 0; padding-bottom: 60px;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg); color: white; padding: 20px; margin: 0; padding-bottom: 80px;
             max-width: 600px; margin-left: auto; margin-right: auto;
         }
+
+        h1 { margin: 10px 0 20px; font-size: 1.8rem; text-align: center; letter-spacing: -1px; }
+
+        /* BOTON DE ARRANQUE GIGANTE */
+        .start-btn {
+            background: #333; color: #aaa; border: 2px solid #444;
+            width: 100%; padding: 20px; border-radius: 20px;
+            font-size: 1.1rem; font-weight: 800; margin-bottom: 20px;
+            cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .start-btn.active {
+            background: var(--primary); color: black; border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .balance-card { background: var(--card); padding: 25px; border-radius: 24px; text-align: center; margin-bottom: 25px; border: 1px solid #333; }
+        .time-display { font-size: 3.5rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1; margin: 10px 0; }
+        .label-sm { color: #888; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; }
+
+        .form-group { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #333; }
+        input, select { background: var(--gray); border: 1px solid #333; padding: 12px; border-radius: 12px; color: white; font-size: 1rem; width: 100%; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 10px; }
-        h1 { margin: 0; font-size: 1.8rem; letter-spacing: -1px; }
-        .streak { background: #2c2c2e; padding: 6px 14px; border-radius: 20px; color: var(--accent); font-weight: 700; font-size: 0.9rem; border: 1px solid var(--gray); }
-
-        /* CONTROL DE MODO */
-        .status-card { 
-            background: var(--card); padding: 20px; border-radius: 20px; 
-            margin-bottom: 20px; border: 1px solid #333; text-align: center;
-        }
-        .status-indicator { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; display: block;}
-        .status-off { color: #555; }
-        .status-on { color: var(--primary); text-shadow: 0 0 10px rgba(0,255,136,0.3); }
-
-        .btn-toggle-bg {
-            background: #333; color: white; border: 1px solid #555;
-            padding: 10px 20px; border-radius: 30px; font-weight: 600; cursor: pointer; font-size: 0.9rem;
-        }
-        .btn-toggle-bg.active { background: var(--primary); color: black; border-color: var(--primary); }
-
-        .balance-card { background: var(--card); padding: 25px 20px; border-radius: 24px; text-align: center; margin-bottom: 25px; border: 1px solid #333; }
-        .time-display { font-size: 3.8rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -2px; }
-        .label-sm { color: #8e8e93; font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
-
-        .form-group { background: var(--card); padding: 20px; border-radius: 24px; margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px; border: 1px solid #333; }
-        input, select { background: #2c2c2e; border: 1px solid transparent; padding: 14px; border-radius: 14px; color: white; font-size: 1rem; width: 100%; }
-        input:focus { border-color: var(--primary); background: var(--gray); }
         .row { display: flex; gap: 10px; }
-        
-        .btn { border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; transition: transform 0.1s; }
-        .btn:active { transform: scale(0.98); }
+        .btn { border: none; padding: 15px; border-radius: 14px; font-weight: 700; font-size: 1rem; width: 100%; margin-top: 5px; cursor: pointer; }
         .btn-add { background: var(--primary); color: black; }
-        .btn-use { background: var(--red); color: white; margin-top: 15px; }
-        .btn-pause { background: var(--accent); color: black; }
+        .btn-use { background: var(--red); color: white; }
+        .btn-pause { background: #ff9d00; color: black; }
 
         .task-list { display: flex; flex-direction: column; gap: 10px; }
-        .task-item { background: var(--card); padding: 16px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
-        .task-info { flex: 1; margin-right: 10px; }
-        .task-info b { display: block; font-size: 1.05rem; }
-        .task-info span { color: #8e8e93; font-size: 0.85rem; }
-        .btn-action { background: var(--gray); color: var(--primary); padding: 10px 16px; border-radius: 12px; font-size: 0.9rem; font-weight: 600; border: none; }
-        .btn-del { background: transparent; color: #555; font-size: 1.2rem; border: none; padding: 0 10px; }
-        
-        .timer-running { color: var(--accent) !important; font-weight: bold; }
-        .hidden { display: none !important; }
+        .task-item { background: var(--card); padding: 15px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; }
+        .task-info b { display: block; font-size: 1rem; }
+        .task-info span { color: #888; font-size: 0.85rem; }
+        .btn-action { background: var(--gray); color: var(--primary); padding: 8px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; border: none; }
+        .running { color: #ff9d00 !important; font-weight: bold; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>EarnIt V11</h1>
-        <div class="streak" id="streakDisplay">🔥 0</div>
-    </div>
+    <h1>EarnIt V12</h1>
 
-    <div class="status-card">
-        <div class="label-sm">SISTEMA ANTI-SUSPENSIÓN</div>
-        <span id="statusText" class="status-indicator status-off">🔴 INACTIVO</span>
-        <button id="bgBtn" class="btn-toggle-bg" onclick="toggleBackgroundMode()">ACTIVAR MODO 2º PLANO</button>
-        <div style="font-size: 0.75rem; color: #666; margin-top: 10px; line-height: 1.3;">
-            ⚠️ Activa esto para que suene la alarma fuera de la app.<br>
-            Aparecerá un reproductor en tu pantalla de bloqueo. <br>
-            <b>No pongas música en Spotify o esto se apagará.</b>
-        </div>
+    <button id="initBtn" class="start-btn" onclick="startSystem()">
+        <span>▶️</span> INICIAR SISTEMA DE SONIDO
+    </button>
+    <div style="text-align:center; font-size:0.75rem; color:#666; margin-top:-10px; margin-bottom:20px;">
+        (Toca esto cada vez que abras la app para que funcione en 2º plano)
     </div>
 
     <div class="balance-card">
-        <div class="label-sm">TIEMPO DISPONIBLE</div>
+        <div class="label-sm">TIEMPO ACUMULADO</div>
         <div class="time-display" id="balance">00:00:00</div>
         <button id="useBtn" class="btn btn-use" onclick="toggleUsage()">CANJEAR TIEMPO</button>
     </div>
-    
+
     <div class="form-group">
-        <div class="label-sm">NUEVA RUTINA</div>
+        <div class="label-sm">NUEVA TAREA</div>
         <select id="taskType" onchange="toggleInputs()">
-            <option value="timer">⏱ Cronómetro (Trabajo + Premio)</option>
-            <option value="click">✅ Check (Solo Premio)</option>
+            <option value="timer">⏱ Cronómetro</option>
+            <option value="click">✅ Check Rápido</option>
         </select>
         <input type="text" id="taskName" placeholder="Nombre...">
         <div class="row">
-            <input type="number" id="taskDuration" placeholder="Dura (min)">
-            <input type="number" id="taskReward" placeholder="Ganas (min)">
+            <input type="number" id="taskDuration" placeholder="Duración (m)">
+            <input type="number" id="taskReward" placeholder="Premio (m)">
         </div>
-        <button class="btn btn-add" onclick="createTask()">+ AÑADIR</button>
+        <button class="btn btn-add" onclick="createTask()">AÑADIR</button>
     </div>
 
-    <div class="label-sm" style="margin-left: 5px; margin-bottom: 10px;">MIS TAREAS</div>
     <div class="task-list" id="taskList"></div>
 
-    <audio id="silentAudio" loop playsinline>
+    <audio id="silentAudio" loop playsinline preload="auto">
         <source src="data:audio/mp3;base64,SUQzBAAAAAABAFRYWFgAAAASAAADbWFqb3JfYnJhbmQAbXA0MgBUWFhYAAAAEQAAA21pbm9yX3ZlcnNpb24AMABUWFhYAAAAHAAAA2NvbXBhdGlibGVfYnJhbmRzAGlzb21tcDQyAFRTU0UAAAAPAAADTGF2ZjU3LjU2LjEwMAAAAAAAAAAAAAAA//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIwAHCwwRFh4iJSksLzI2Oi8xMzy/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/AAAADExhdmM1Ny42NC4xMDIAAAAAAAAAAAAAAAINAAAAAAAAAAAAAAAAAAAAAA==" type="audio/mpeg">
     </audio>
 
     <script>
-        // --- CONFIGURACIÓN GLOBAL ---
-        let totalSeconds = parseInt(localStorage.getItem('totalSeconds')) || 0;
-        let streak = parseInt(localStorage.getItem('streak')) || 0;
-        let tasks = JSON.parse(localStorage.getItem('tasksArray')) || [];
-        let bgMode = false; // Empezamos siempre apagado para forzar interacción
-        let mainInterval;
-        let isUsing = false;
-
-        // --- SISTEMA DE AUDIO (EL CORAZÓN DE LA APP) ---
+        // --- INICIALIZACIÓN DE AUDIO (CRÍTICO) ---
         const silentAudio = document.getElementById('silentAudio');
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const initBtn = document.getElementById('initBtn');
+        let audioContext = null;
+        let systemActive = false;
 
-        function toggleBackgroundMode() {
-            bgMode = !bgMode;
-            const btn = document.getElementById('bgBtn');
-            const status = document.getElementById('statusText');
+        function startSystem() {
+            // 1. Crear el contexto de audio
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
 
-            if (bgMode) {
-                // ACTIVAR
-                silentAudio.play().then(() => {
-                    btn.classList.add('active');
-                    btn.innerText = "DESACTIVAR";
-                    status.innerText = "🟢 VIVO (Modo Música)";
-                    status.classList.remove('status-off');
-                    status.classList.add('status-on');
+            // 2. Intentar reproducir audio HTML5 (Silencio)
+            // Esto es lo que mantiene la app viva en segundo plano
+            const playPromise = silentAudio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // ÉXITO
+                    systemActive = true;
+                    initBtn.classList.add('active');
+                    initBtn.innerHTML = "<span>🔊</span> SISTEMA ACTIVO";
                     
+                    // 3. Forzar Session Metadata (Para que salga en pantalla bloqueo)
                     if ('mediaSession' in navigator) {
                         navigator.mediaSession.metadata = new MediaMetadata({
                             title: "EarnIt Activo",
@@ -143,82 +124,80 @@
                         });
                         navigator.mediaSession.playbackState = "playing";
                     }
+
+                    // 4. Pedir permiso notificaciones si no se tiene
                     Notification.requestPermission();
-                }).catch(e => {
-                    alert("Error: Toca la pantalla e inténtalo de nuevo. iOS bloqueó el audio.");
-                    bgMode = false;
+
+                }).catch(error => {
+                    // ERROR
+                    console.error(error);
+                    alert("iOS bloqueó el audio. \n\nSOLUCIÓN:\n1. Cierra la app del todo.\n2. Vuelve a abrirla.\n3. Toca ESTE botón antes de hacer nada más.");
+                    initBtn.innerHTML = "❌ ERROR AL INICIAR";
                 });
-            } else {
-                // DESACTIVAR
-                silentAudio.pause();
-                btn.classList.remove('active');
-                btn.innerText = "ACTIVAR MODO 2º PLANO";
-                status.innerText = "🔴 INACTIVO";
-                status.classList.remove('status-on');
-                status.classList.add('status-off');
+            }
+            
+            // 5. Resumir contexto WebAudio por si estaba suspendido
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
             }
         }
 
-        function playAlarm() {
-            // Sonido muy molesto para asegurar que se oye
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+        // --- SISTEMA DE ALARMA ---
+        function playLoudAlarm() {
+            if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') audioContext.resume();
+
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+
             osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            gain.connect(audioContext.destination);
+
+            // Sonido tipo SIRENA (Sube y baja)
+            osc.type = 'sawtooth';
+            const now = audioContext.currentTime;
             
-            osc.type = 'sawtooth'; // Sonido más agresivo
-            
-            // Patrón de alarma: Ti-Ti-Ti
-            const now = audioCtx.currentTime;
-            osc.frequency.setValueAtTime(800, now);
-            osc.frequency.setValueAtTime(800, now + 0.1);
-            osc.frequency.setValueAtTime(0, now + 0.11); // Silencio breve
-            
-            osc.frequency.setValueAtTime(800, now + 0.2);
-            osc.frequency.setValueAtTime(800, now + 0.3);
-            osc.frequency.setValueAtTime(0, now + 0.31);
-            
-            osc.frequency.setValueAtTime(800, now + 0.4);
-            osc.frequency.setValueAtTime(800, now + 0.5);
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.linearRampToValueAtTime(900, now + 0.5);
+            osc.frequency.linearRampToValueAtTime(600, now + 1.0);
 
             gain.gain.setValueAtTime(0.5, now);
-            gain.gain.linearRampToValueAtTime(0, now + 1);
-            
+            gain.gain.linearRampToValueAtTime(0, now + 2);
+
             osc.start();
-            osc.stop(now + 1.5);
-            
-            // Vibrar
-            if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
+            osc.stop(now + 2);
+
+            if (navigator.vibrate) navigator.vibrate([1000]);
         }
 
-        function sendNotification(title, body) {
-            playAlarm();
-            if (Notification.permission === 'granted') {
-                new Notification(title, { body: body });
-            }
+        function notify(title, body) {
+            playLoudAlarm();
+            if (Notification.permission === 'granted') new Notification(title, { body });
         }
 
-        // --- LÓGICA DE TIEMPO ---
+        // --- LÓGICA DE TIEMPO (STANDARD) ---
+        let totalSeconds = parseInt(localStorage.getItem('totalSeconds')) || 0;
+        let streak = parseInt(localStorage.getItem('streak')) || 0;
+        let tasks = JSON.parse(localStorage.getItem('tasksArray')) || [];
+        let isUsing = false;
+        let mainInterval;
+
         function updateDisplay() {
             let h = Math.floor(totalSeconds / 3600);
             let m = Math.floor((totalSeconds % 3600) / 60);
             let s = totalSeconds % 60;
             const timeStr = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            
             document.getElementById('balance').innerText = timeStr;
             localStorage.setItem('totalSeconds', totalSeconds);
-            document.getElementById('streakDisplay').innerText = `🔥 ${streak}`;
-
-            // Actualizar Widget de Bloqueo
-            if (bgMode && 'mediaSession' in navigator) {
-                let statusMsg = isUsing ? "Disfrutando..." : "Esperando...";
-                if (tasks.some(t => t.endTime && t.endTime > Date.now())) statusMsg = "Trabajando...";
-                
-                // Actualizar título de canción con el tiempo
+            
+            // Actualizar Widget de bloqueo
+            if(systemActive && 'mediaSession' in navigator) {
                 if(isUsing) {
+                    navigator.mediaSession.metadata.title = "CANJEANDO TIEMPO";
                     navigator.mediaSession.metadata.artist = `Quedan: ${timeStr}`;
-                    navigator.mediaSession.metadata.title = "Tiempo Libre";
+                } else if (tasks.some(t => t.endTime > Date.now())) {
+                    navigator.mediaSession.metadata.title = "TRABAJANDO";
+                    navigator.mediaSession.metadata.artist = "Gana tu tiempo...";
                 }
             }
         }
@@ -229,16 +208,13 @@
             const reward = document.getElementById('taskReward').value;
             const duration = type === 'click' ? 0 : document.getElementById('taskDuration').value;
 
-            if (!name || !reward) return alert("Faltan datos");
-            if (type === 'timer' && !duration) return alert("Falta duración");
-
+            if (!name || !reward) return;
             tasks.push({ id: Date.now(), name, duration: parseInt(duration), reward: parseInt(reward), type, endTime: null, notified: false });
             saveTasks(); renderTasks();
             
-            // Limpiar inputs
             document.getElementById('taskName').value = "";
-            document.getElementById('taskReward').value = "";
             document.getElementById('taskDuration').value = "";
+            document.getElementById('taskReward').value = "";
         }
 
         function renderTasks() {
@@ -247,63 +223,54 @@
             const now = Date.now();
 
             tasks.forEach(task => {
-                let status = "", btn = "", running = false;
-
+                let status = "", btn = "", cls = "";
+                
                 if (task.type === 'click') {
-                    status = `Ganas: +${task.reward}m`; btn = "Check";
+                    status = `+${task.reward}m`; btn = "Cobrar";
                 } else {
                     if (task.endTime && task.endTime > now) {
-                        // CORRIENDO
                         let rem = Math.ceil((task.endTime - now) / 1000);
                         let m = Math.floor(rem/60);
                         let s = (rem%60).toString().padStart(2,'0');
-                        status = `⏳ ${m}:${s}`; btn = "En curso..."; running = true;
-                        
-                        if(bgMode && 'mediaSession' in navigator) {
-                             navigator.mediaSession.metadata.title = task.name;
-                             navigator.mediaSession.metadata.artist = `Termina en: ${m}:${s}`;
-                        }
+                        status = `⏳ ${m}:${s}`; btn = "Esperar..."; cls = "running";
                     } else if (task.endTime && task.endTime <= now) {
-                        // TERMINADA
-                        status = "¡LISTO!"; btn = "Cobrar";
+                        status = "¡LISTO!"; btn = "Reclamar"; cls = "running";
                         if (!task.notified) {
-                            sendNotification("¡RUTINA COMPLETADA!", `Terminaste: ${task.name}`);
+                            notify("¡TAREA COMPLETADA!", task.name);
                             task.notified = true;
                             saveTasks();
                         }
                     } else {
-                        status = `${task.duration}m → ${task.reward}m`; btn = "Iniciar";
+                        status = `${task.duration}m / ${task.reward}m`; btn = "Iniciar";
                     }
                 }
 
                 container.innerHTML += `
-                    <div class="task-item">
-                        <div class="task-info"><b>${task.name}</b><span class="${running?'timer-running':''}">${status}</span></div>
-                        <div class="task-actions">
-                            <button class="btn-action" onclick="handleTask(${task.id})" style="${btn==='Cobrar'?'background:var(--primary);color:black':''}" ${running?'disabled':''}>${btn}</button>
-                            <button class="btn-del" onclick="deleteTask(${task.id})">✕</button>
-                        </div>
-                    </div>`;
+                <div class="task-item">
+                    <div class="task-info"><b>${task.name}</b><span class="${cls}">${status}</span></div>
+                    <div class="task-actions">
+                        <button class="btn-action" onclick="handleTask(${task.id})" ${btn==='Esperar...'?'disabled':''}>${btn}</button>
+                        <button class="btn-action" style="background:none; color:#666;" onclick="deleteTask(${task.id})">✕</button>
+                    </div>
+                </div>`;
             });
-            
-            // Si el modo BG está activo, nos aseguramos que el audio siga sonando
-            if (bgMode && silentAudio.paused) {
-                silentAudio.play().catch(e => console.log("Audio interrumpido"));
-            }
+
+            // Si el sistema está activo pero el audio se pausó (iOS lo mata a veces), intentar revivir
+            if (systemActive && silentAudio.paused) silentAudio.play().catch(e => {});
         }
 
         function handleTask(id) {
+            if(!systemActive) alert("⚠️ Recuerda pulsar 'INICIAR SISTEMA' arriba, o la alarma no sonará al bloquear.");
             const task = tasks.find(t => t.id === id);
             const now = Date.now();
 
             if (task.type === 'click') {
-                claim(task.reward * 60);
+                addTime(task.reward * 60);
             } else {
                 if (!task.endTime || now > task.endTime) {
                     if (task.endTime && now > task.endTime) {
-                        claim(task.reward * 60); task.endTime = null; task.notified = false;
+                        addTime(task.reward * 60); task.endTime = null; task.notified = false;
                     } else {
-                        if(!bgMode && !confirm("Recomendación: Activa el 'Modo 2º Plano' arriba para que la alarma suene si bloqueas el móvil. ¿Seguir sin activarlo?")) return;
                         task.endTime = now + (task.duration * 60000); task.notified = false;
                     }
                 }
@@ -311,29 +278,21 @@
             saveTasks(); renderTasks();
         }
 
-        function claim(sec) {
-            totalSeconds += sec;
-            const today = new Date().toDateString();
-            if (localStorage.getItem('lastDate') !== today) { streak++; localStorage.setItem('lastDate', today); localStorage.setItem('streak', streak); }
-            updateDisplay();
-        }
-
         function toggleUsage() {
             if (!isUsing) {
-                if (totalSeconds <= 0) return alert("Sin saldo.");
-                if(!bgMode && !confirm("Recomendación: Activa el 'Modo 2º Plano' arriba. Si no, la alarma NO sonará si usas otra app.")) return;
+                if (totalSeconds <= 0) return alert("No tienes tiempo.");
+                if(!systemActive) alert("⚠️ ATENCIÓN: Pulsa 'INICIAR SISTEMA' arriba primero.");
                 
                 isUsing = true;
                 localStorage.setItem('usageStartTime', Date.now());
-                
-                const btn = document.getElementById('useBtn');
-                btn.innerText = "PAUSAR"; btn.classList.add('btn-pause'); btn.classList.remove('btn-use');
+                document.getElementById('useBtn').innerText = "PAUSAR";
+                document.getElementById('useBtn').classList.replace('btn-use', 'btn-pause');
                 
                 mainInterval = setInterval(() => {
                     if (totalSeconds > 0) {
                         totalSeconds--; updateDisplay();
                         if(totalSeconds === 0) {
-                            sendNotification("¡SE ACABÓ!", "Tiempo libre terminado.");
+                            notify("¡TIEMPO AGOTADO!", "Se acabó el recreo.");
                             stopUsage();
                         }
                     } else stopUsage();
@@ -344,41 +303,33 @@
         function stopUsage() {
             isUsing = false; clearInterval(mainInterval);
             localStorage.removeItem('usageStartTime');
-            const btn = document.getElementById('useBtn');
-            btn.innerText = "CANJEAR TIEMPO"; btn.classList.remove('btn-pause'); btn.classList.add('btn-use');
-            renderTasks();
+            document.getElementById('useBtn').innerText = "CANJEAR TIEMPO";
+            document.getElementById('useBtn').classList.replace('btn-pause', 'btn-use');
         }
 
-        function deleteTask(id) {
-            if(confirm("¿Borrar?")) { tasks = tasks.filter(t=>t.id!==id); saveTasks(); renderTasks(); }
-        }
+        function addTime(s) { totalSeconds += s; updateDisplay(); }
+        function deleteTask(id) { if(confirm("¿Borrar?")) { tasks = tasks.filter(t=>t.id!==id); saveTasks(); renderTasks(); }}
         function saveTasks() { localStorage.setItem('tasksArray', JSON.stringify(tasks)); }
         function toggleInputs() {
              const type = document.getElementById('taskType').value;
              document.getElementById('taskDuration').classList.toggle('hidden', type === 'click');
         }
 
-        // --- LOOP PRINCIPAL ---
-        // Sincronización de seguridad por si falla el audio
-        function syncMath() {
+        // Sync al volver
+        function sync() {
             const now = Date.now();
-            const usageStart = localStorage.getItem('usageStartTime');
-            if (usageStart) {
-                const elapsed = Math.floor((now - parseInt(usageStart)) / 1000);
-                if (elapsed >= totalSeconds) { 
-                    if(totalSeconds > 0) { totalSeconds = 0; alert("Tiempo agotado."); }
-                    stopUsage(); 
-                } else {
-                    totalSeconds -= elapsed;
-                    localStorage.setItem('usageStartTime', now);
-                }
+            const start = localStorage.getItem('usageStartTime');
+            if (start) {
+                const elapsed = Math.floor((now - parseInt(start)) / 1000);
+                if (elapsed >= totalSeconds) { totalSeconds = 0; stopUsage(); }
+                else { totalSeconds -= elapsed; localStorage.setItem('usageStartTime', now); }
             }
-            updateDisplay();
-            renderTasks();
+            updateDisplay(); renderTasks();
         }
 
-        window.onload = () => { syncMath(); setInterval(renderTasks, 1000); };
-        document.addEventListener("visibilitychange", () => { if(!document.hidden) syncMath(); });
+        window.onload = () => { sync(); setInterval(renderTasks, 1000); };
+        document.addEventListener("visibilitychange", () => { if(!document.hidden) sync(); });
+
     </script>
 </body>
 </html>
