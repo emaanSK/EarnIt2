@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EarnIt Universal</title>
+    <title>EarnIt V10</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1164/1164620.png">
@@ -13,30 +13,27 @@
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg); 
-            color: white; 
-            padding: 20px; 
-            margin: 0; 
-            padding-bottom: 60px;
-            /* AJUSTE PARA IPAD: Centra la app y limita el ancho */
-            max-width: 600px; 
-            margin-left: auto; 
-            margin-right: auto;
+            background: var(--bg); color: white; padding: 20px; margin: 0; padding-bottom: 60px;
+            max-width: 600px; margin-left: auto; margin-right: auto;
         }
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 10px; }
         h1 { margin: 0; font-size: 1.8rem; letter-spacing: -1px; }
         .streak { background: #2c2c2e; padding: 6px 14px; border-radius: 20px; color: var(--accent); font-weight: 700; font-size: 0.9rem; border: 1px solid var(--gray); }
 
-        /* SWITCH DE MODO */
-        .mode-switch-container { background: var(--card); padding: 15px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border: 1px solid #333; }
-        .switch-label { font-size: 0.9rem; color: #ccc; }
-        .switch-sub { font-size: 0.75rem; color: #666; display: block; margin-top: 2px; }
+        /* INTERRUPTOR DE MODO FONDO */
+        .mode-switch-container { 
+            background: var(--card); padding: 15px; border-radius: 18px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; border: 1px solid #333; 
+        }
+        .switch-label { font-size: 0.95rem; font-weight: 600; color: #fff; }
+        .switch-sub { font-size: 0.75rem; color: #888; display: block; margin-top: 4px; line-height: 1.3; }
         
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch { position: relative; display: inline-block; width: 52px; height: 30px; flex-shrink: 0; margin-left: 10px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); }
 
@@ -70,17 +67,17 @@
 <body>
 
     <div class="header">
-        <h1>EarnIt</h1>
+        <h1>EarnIt V10</h1>
         <div class="streak" id="streakDisplay">🔥 0</div>
     </div>
 
     <div class="mode-switch-container">
         <div>
-            <div class="switch-label">Modo Bloqueo & Widget</div>
-            <span class="switch-sub">Activar para ver widget en pantalla bloqueo<br>y asegurar alarma. (Detiene música)</span>
+            <div class="switch-label">🔔 Alerta en 2º Plano</div>
+            <span class="switch-sub"><b>ON:</b> Avisa fuera de la app (Para música).<br><b>OFF:</b> Compatible con Spotify (Avisa al volver).</span>
         </div>
         <label class="switch">
-            <input type="checkbox" id="alarmModeToggle" onchange="toggleAlarmMode()">
+            <input type="checkbox" id="bgModeToggle" onchange="toggleBgMode()">
             <span class="slider"></span>
         </label>
     </div>
@@ -91,7 +88,7 @@
         <button id="useBtn" class="btn btn-use" onclick="toggleUsage()">CANJEAR TIEMPO</button>
     </div>
     
-    <button id="notifBtn" style="background:none; border:none; color:#666; font-size:0.8rem; width:100%; margin-bottom:15px; text-decoration: underline;">🔔 Habilitar Sonido (Tocar 1ª vez)</button>
+    <button id="notifBtn" style="background:none; border:none; color:#666; font-size:0.8rem; width:100%; margin-bottom:15px; text-decoration: underline;">🔔 Probar Sonido (Tocar 1ª vez)</button>
 
     <div class="form-group">
         <div class="label-sm">NUEVA RUTINA</div>
@@ -115,99 +112,96 @@
     </audio>
 
     <script>
-        // CONFIGURACIÓN
+        // --- CONFIGURACIÓN ---
         let totalSeconds = parseInt(localStorage.getItem('totalSeconds')) || 0;
         let streak = parseInt(localStorage.getItem('streak')) || 0;
         let tasks = JSON.parse(localStorage.getItem('tasksArray')) || [];
-        let alarmMode = localStorage.getItem('alarmMode') === 'true'; 
+        let bgMode = localStorage.getItem('bgMode') === 'true'; 
         let mainInterval;
         let isUsing = false;
 
-        document.getElementById('alarmModeToggle').checked = alarmMode;
+        // Inicializar Switch
+        document.getElementById('bgModeToggle').checked = bgMode;
 
-        function toggleAlarmMode() {
-            alarmMode = document.getElementById('alarmModeToggle').checked;
-            localStorage.setItem('alarmMode', alarmMode);
-            if (!alarmMode) {
-                silentAudio.pause();
-                if('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
-            } else if (isUsing || tasks.some(t => t.endTime)) {
-                keepAwake();
-            }
-        }
-
-        // --- AUDIO Y WIDGET ---
+        // --- GESTIÓN DE SEGUNDO PLANO ---
         const silentAudio = document.getElementById('silentAudio');
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+        function toggleBgMode() {
+            bgMode = document.getElementById('bgModeToggle').checked;
+            localStorage.setItem('bgMode', bgMode);
+            
+            if (bgMode) {
+                // Si activa el modo, y hay algo corriendo, activamos audio ya
+                if (isUsing || tasks.some(t => t.endTime)) keepAwake();
+                alert("Modo 2º Plano ACTIVADO.\nLa app se mantendrá viva y te avisará fuera.\n(La música externa se pausará).");
+            } else {
+                // Si desactiva, soltamos el audio
+                silentAudio.pause();
+                if('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
+            }
+        }
+
         function keepAwake() {
-            if (alarmMode && silentAudio.paused) {
+            if (bgMode && silentAudio.paused) {
                 silentAudio.play().catch(() => {});
             }
         }
 
-        function updateLockScreenWidget(title, subtitle) {
-            if ('mediaSession' in navigator && alarmMode) {
-                navigator.mediaSession.metadata = new MediaMetadata({
-                    title: title,
-                    artist: subtitle,
-                    artwork: [{ src: 'https://cdn-icons-png.flaticon.com/512/1164/1164620.png', sizes: '512x512', type: 'image/png' }]
-                });
-                navigator.mediaSession.playbackState = "playing";
-            }
-        }
-
-        function playLoudBeep() {
+        function playBeep() {
+            // Sonido fuerte para la alarma
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
+            
+            // Sonido tipo "Alarma Digital"
             osc.type = 'square';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.6);
-            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.6);
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(800, audioCtx.currentTime + 0.2);
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.4);
+            
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.8);
+            
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.6);
+            osc.stop(audioCtx.currentTime + 0.8);
         }
 
         document.getElementById('notifBtn').onclick = () => {
             Notification.requestPermission();
             if(audioCtx.state === 'suspended') audioCtx.resume();
-            playLoudBeep();
-            alert("Sonido activado. Si 'Modo Bloqueo' está ON, verás el widget de música como cronómetro.");
+            playBeep();
         };
 
         function sendNotification(title, body) {
-            if (Notification.permission === 'granted') new Notification(title, { body });
-            playLoudBeep();
-            if (navigator.vibrate) navigator.vibrate([500]);
+            // Intenta enviar notificación visual
+            if (Notification.permission === 'granted') {
+                new Notification(title, { body: body });
+            }
+            // Siempre emite sonido y vibración
+            playBeep();
+            if (navigator.vibrate) navigator.vibrate([500, 200, 500]);
         }
 
-        // --- LOGICA UI ---
-        function toggleInputs() {
-            const type = document.getElementById('taskType').value;
-            const dur = document.getElementById('taskDuration');
-            type === 'click' ? dur.classList.add('hidden') : dur.classList.remove('hidden');
-        }
-
+        // --- LÓGICA DE TIEMPO ---
         function updateDisplay() {
             let h = Math.floor(totalSeconds / 3600);
             let m = Math.floor((totalSeconds % 3600) / 60);
             let s = totalSeconds % 60;
-            const timeString = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            
-            document.getElementById('balance').innerText = timeString;
+            const timeStr = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            document.getElementById('balance').innerText = timeStr;
             localStorage.setItem('totalSeconds', totalSeconds);
             document.getElementById('streakDisplay').innerText = `🔥 ${streak}`;
-
-            if (isUsing && alarmMode) {
-                updateLockScreenWidget(`⏳ ${timeString}`, "Disfrutando Tiempo Libre");
+            
+            // Si está en modo background y consumiendo tiempo, mostramos en widget
+            if(bgMode && isUsing && 'mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({ title: "Tiempo Libre", artist: `Quedan: ${timeStr}` });
+                navigator.mediaSession.playbackState = "playing";
             }
         }
 
-        // --- CORE ---
         function createTask() {
             const name = document.getElementById('taskName').value;
             const type = document.getElementById('taskType').value;
@@ -217,34 +211,48 @@
             if (!name || !reward) return alert("Faltan datos");
             if (type === 'timer' && !duration) return alert("Falta duración");
 
-            tasks.push({ id: Date.now(), name, duration: parseInt(duration), reward: parseInt(reward), type, endTime: null, notified: false });
+            tasks.push({ 
+                id: Date.now(), name, 
+                duration: parseInt(duration), reward: parseInt(reward), 
+                type, endTime: null, notified: false 
+            });
             saveTasks(); renderTasks();
-            document.getElementById('taskName').value = ""; document.getElementById('taskReward').value = ""; document.getElementById('taskDuration').value = "";
+            
+            document.getElementById('taskName').value = "";
+            document.getElementById('taskReward').value = "";
+            document.getElementById('taskDuration').value = "";
         }
 
         function renderTasks() {
             const container = document.getElementById('taskList');
             container.innerHTML = "";
             const now = Date.now();
-            let activeTaskName = null;
-            let activeTaskTime = null;
+            let anyRunning = false;
 
             tasks.forEach(task => {
                 let status = "", btn = "", running = false;
+
                 if (task.type === 'click') {
                     status = `Ganas: +${task.reward}m`; btn = "Check";
                 } else {
                     if (task.endTime && task.endTime > now) {
+                        // TAREA CORRIENDO
+                        anyRunning = true;
                         let rem = Math.ceil((task.endTime - now) / 1000);
                         let m = Math.floor(rem/60);
                         let s = (rem%60).toString().padStart(2,'0');
                         status = `⏳ ${m}:${s}`; btn = "En curso..."; running = true;
-                        activeTaskName = task.name;
-                        activeTaskTime = status;
+                        
+                        // Actualizar Widget si está activo
+                        if(bgMode && 'mediaSession' in navigator) {
+                            navigator.mediaSession.metadata = new MediaMetadata({ title: task.name, artist: `Termina en: ${m}:${s}` });
+                            navigator.mediaSession.playbackState = "playing";
+                        }
                     } else if (task.endTime && task.endTime <= now) {
+                        // TAREA TERMINADA
                         status = "¡LISTO!"; btn = "Cobrar";
                         if (!task.notified) {
-                            sendNotification("¡Tarea Terminada!", task.name);
+                            sendNotification("✅ ¡Tarea Finalizada!", `${task.name} completada.`);
                             task.notified = true;
                             saveTasks();
                         }
@@ -263,30 +271,32 @@
                     </div>`;
             });
 
-            if (activeTaskName) {
+            // GESTIÓN AUDIO
+            if ((anyRunning || isUsing) && bgMode) {
                 keepAwake();
-                updateLockScreenWidget(activeTaskTime, activeTaskName);
-            } else if (isUsing) {
-                keepAwake();
-            } else {
-                if (alarmMode) {
-                    silentAudio.pause();
-                    if('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
-                }
+            } else if (!anyRunning && !isUsing) {
+                silentAudio.pause();
+                if('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
             }
         }
 
         function handleTask(id) {
             const task = tasks.find(t => t.id === id);
             const now = Date.now();
+
             if (task.type === 'click') {
                 claim(task.reward * 60);
             } else {
                 if (!task.endTime || now > task.endTime) {
                     if (task.endTime && now > task.endTime) {
-                        claim(task.reward * 60); task.endTime = null; task.notified = false;
+                        // COBRAR
+                        claim(task.reward * 60);
+                        task.endTime = null; task.notified = false;
                     } else {
-                        task.endTime = now + (task.duration * 60000); task.notified = false; keepAwake();
+                        // INICIAR
+                        task.endTime = now + (task.duration * 60000);
+                        task.notified = false;
+                        if(bgMode) keepAwake();
                     }
                 }
             }
@@ -296,7 +306,9 @@
         function claim(sec) {
             totalSeconds += sec;
             const today = new Date().toDateString();
-            if (localStorage.getItem('lastDate') !== today) { streak++; localStorage.setItem('lastDate', today); localStorage.setItem('streak', streak); }
+            if (localStorage.getItem('lastDate') !== today) {
+                streak++; localStorage.setItem('lastDate', today); localStorage.setItem('streak', streak);
+            }
             updateDisplay();
         }
 
@@ -305,7 +317,7 @@
                 if (totalSeconds <= 0) return alert("Sin saldo.");
                 isUsing = true;
                 localStorage.setItem('usageStartTime', Date.now());
-                keepAwake();
+                if(bgMode) keepAwake();
                 
                 const btn = document.getElementById('useBtn');
                 btn.innerText = "PAUSAR"; btn.classList.add('btn-pause'); btn.classList.remove('btn-use');
@@ -313,7 +325,10 @@
                 mainInterval = setInterval(() => {
                     if (totalSeconds > 0) {
                         totalSeconds--; updateDisplay();
-                        if(totalSeconds === 0) { sendNotification("¡FIN!", "Vuelve a trabajar."); stopUsage(); }
+                        if(totalSeconds === 0) {
+                            sendNotification("🚨 ¡TIEMPO AGOTADO!", "Se acabó el recreo.");
+                            stopUsage();
+                        }
                     } else stopUsage();
                 }, 1000);
             } else stopUsage();
@@ -324,29 +339,59 @@
             localStorage.removeItem('usageStartTime');
             const btn = document.getElementById('useBtn');
             btn.innerText = "CANJEAR TIEMPO"; btn.classList.remove('btn-pause'); btn.classList.add('btn-use');
-            if(alarmMode) {
-                 if('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
-                 silentAudio.pause();
+            if(bgMode) {
+                silentAudio.pause();
+                if('mediaSession' in navigator) navigator.mediaSession.playbackState = "none";
             }
             renderTasks();
         }
 
-        function deleteTask(id) { if(confirm("¿Borrar?")) { tasks = tasks.filter(t=>t.id!==id); saveTasks(); renderTasks(); }}
+        function deleteTask(id) {
+            if(confirm("¿Borrar?")) { tasks = tasks.filter(t=>t.id!==id); saveTasks(); renderTasks(); }
+        }
         function saveTasks() { localStorage.setItem('tasksArray', JSON.stringify(tasks)); }
+        function toggleInputs() {
+             const type = document.getElementById('taskType').value;
+             document.getElementById('taskDuration').classList.toggle('hidden', type === 'click');
+        }
 
+        // SINCRONIZACIÓN (Para cuando el modo background está APAGADO o falla)
         function sync() {
             const now = Date.now();
+            
+            // 1. Sync Tareas
+            // No hacemos nada especial aquí, renderTasks se encargará de ver si acabó una tarea
+            
+            // 2. Sync Tiempo Libre (Timer Usage)
             const usageStart = localStorage.getItem('usageStartTime');
             if (usageStart) {
                 const elapsed = Math.floor((now - parseInt(usageStart)) / 1000);
-                totalSeconds = Math.max(0, totalSeconds - elapsed);
-                if (totalSeconds === 0) stopUsage(); else localStorage.setItem('usageStartTime', now);
+                // Si el tiempo real que pasó es mayor a lo que quedaba
+                if (elapsed >= totalSeconds) {
+                    // Solo alertamos si NO se notificó ya via background
+                    if (totalSeconds > 0) { 
+                         totalSeconds = 0;
+                         alert("El tiempo se acabó mientras estabas fuera.");
+                    }
+                    stopUsage();
+                } else {
+                    totalSeconds -= elapsed;
+                    localStorage.setItem('usageStartTime', now);
+                }
             }
-            updateDisplay(); renderTasks();
+            updateDisplay();
+            renderTasks();
         }
 
+        // BUCLE PRINCIPAL
+        // Se ejecuta cada segundo para actualizar UI y chequear alarmas
         window.onload = () => { sync(); setInterval(renderTasks, 1000); };
-        document.addEventListener("visibilitychange", () => { if(!document.hidden) sync(); });
+        
+        // Al volver a la app, forzamos sincronización matemática por si acaso
+        document.addEventListener("visibilitychange", () => { 
+            if(!document.hidden) sync(); 
+        });
     </script>
 </body>
 </html>
+
